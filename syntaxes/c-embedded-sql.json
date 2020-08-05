@@ -2,7 +2,8 @@
   "fileTypes": [
     "ec",
     "sqc",
-    "c"
+    "c",
+    "h"
   ],
   "injectionSelector": "L:source.c, L:source.ec, L:source.sqc, L:meta.block.c",
   "injections": {
@@ -16,6 +17,15 @@
     }
   },
   "patterns": [
+    {
+      "begin": "(EXEC_SQL\\(|exec_sql\\(|EXEC_sql\\(|exec_SQL\\()",
+      "end": "\\)",
+      "patterns": [
+        {
+          "include": "source.sql"
+        }
+      ]
+    },
     {
       "begin": "(EXEC SQL|exec sql|EXEC sql|exec SQL)",
       "end": "(;)",

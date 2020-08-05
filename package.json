@@ -25,7 +25,11 @@
     "c",
     "sql",
     "embedded-sql",
-    "template"
+    "template",
+    "oracle-pro-c",
+    "pro-c",
+    "ec", 
+    "sqc"
   ],
   "contributes": {
     "grammars": [
@@ -33,7 +37,8 @@
         "injectTo": [
           "source.c",
           "source.sqc",
-          "source.ec"
+          "source.ec",
+          "source.h"
         ],
         "scopeName": "inline.c-sql",
         "path": "./syntaxes/c-embedded-sql.json",
