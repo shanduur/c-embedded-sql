@@ -1,5 +1,5 @@
 {
-  "name": "vscode-c-esql",
+  "name": "c-embedded-sql",
   "displayName": "Embedded SQL in C",
   "description": "Highlight Embedded SQL in C code",
   "version": "0.0.1",
