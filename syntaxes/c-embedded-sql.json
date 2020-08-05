@@ -1,0 +1,30 @@
+{
+  "fileTypes": [
+    "ec",
+    "sqc",
+    "c"
+  ],
+  "injectionSelector": "L:source.c, L:source.ec, L:source.sqc, L:meta.block.c",
+  "injections": {
+    "L:source": {
+      "patterns": [
+        {
+          "match": "<",
+          "name": "invalid.illegal.bad-angle-bracket.html"
+        }
+      ]
+    }
+  },
+  "patterns": [
+    {
+      "begin": "(EXEC SQL|exec sql|EXEC sql|exec SQL)",
+      "end": "(;)",
+      "patterns": [
+        {
+          "include": "source.sql"
+        }
+      ]
+    }
+  ],
+  "scopeName": "inline.c-sql"
+}
