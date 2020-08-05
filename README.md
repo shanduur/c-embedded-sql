@@ -4,16 +4,12 @@ Adds syntax highlight support for SQL placed in C code.
 
 ## Installation
 
-## Example
-
-![Example](docs/demo.jpg)
+Install it from marketplace!
 
 ## Requirements
 
 * Visual Studio Code v1.19.0 recommended
-* Start with `EXEC SQL`
-* Finish with regular `;`
-
-## Release Notes
+* Start with `EXEC SQL`or `EXEC_SQL(`
+* Finish with regular `;` or (if stared with `EXEC_SQL(`) with `)`
 
 **Enjoy!**
