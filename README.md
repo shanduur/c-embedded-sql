@@ -1,4 +1,4 @@
-# ES6 String HTML
+# C Embedded SQL
 
 Adds syntax highlight support for SQL placed in C code.
 
