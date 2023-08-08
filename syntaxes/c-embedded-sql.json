@@ -3,9 +3,10 @@
     "ec",
     "sqc",
     "c",
-    "h"
+    "h",
+    "pc"
   ],
-  "injectionSelector": "L:source.c, L:source.ec, L:source.sqc, L:meta.block.c",
+  "injectionSelector": "L:source.pc, L:source.c, L:source.ec, L:source.sqc, L:meta.block.c",
   "injections": {
     "L:source": {
       "patterns": [
