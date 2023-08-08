@@ -1,0 +1,107 @@
+// example from:
+//  - https://www.ibm.com/docs/en/db2/11.5?topic=programming-application-template-in-c
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sqlenv.h>
+#include <sqlutil.h>
+
+EXEC SQL BEGIN DECLARE SECTION;
+    short id;
+    char name[10];
+    short dept;
+    double salary;
+    char hostVarStmtDyn[50];
+EXEC SQL END DECLARE SECTION;
+
+int main()
+{
+    int rc = 0;
+    EXEC SQL INCLUDE SQLCA;
+    /* connect to the database */
+    printf("\n Connecting to database...");
+    EXEC SQL CONNECT TO "sample";
+    if (SQLCODE  <0)
+    {
+        printf("\nConnect Error:  SQLCODE = %d. \n", SQLCODE);
+        goto connect_reset;
+    }
+    else
+    {
+        printf("\n Connected to database.\n");
+    }
+    /* execute an SQL statement (a query) using static SQL; copy the single row
+        of result values into host variables*/
+    EXEC SQL SELECT id, name, dept, salary
+            INTO :id, :name, :dept, :salary
+            FROM staff WHERE id = 310;
+    if (SQLCODE  <0)
+    {
+        printf("Select Error:  SQLCODE = %d. \n", SQLCODE);
+    }
+    else
+    {
+        /* print the host variable values to standard output */
+        printf("\n Executing a static SQL query statement, searching for
+        \n the id value equal to 310\n");
+        printf("\nID        Name        DEPT       Salary\n");
+        printf(" %d           %s          %d       %f\n",
+            id, name, dept, salary);
+    }
+    strcpy(hostVarStmtDyn, "UPDATE staff
+                            SET salary = salary +
+                            WHERE dept = ?");
+    /* execute an SQL statement (an operation) using a host variable
+        and DYNAMIC SQL*/
+    EXEC SQL PREPARE StmtDyn FROM :hostVarStmtDyn;
+    if (SQLCODE  <0)
+    {
+        printf("Prepare Error:  SQLCODE = %d. \n", SQLCODE);
+    }
+    else
+    {
+        EXEC SQL EXECUTE StmtDyn USING :dept;
+    }
+    if (SQLCODE  <0)
+    {
+        printf("Execute Error:  SQLCODE = %d. \n", SQLCODE);
+    }
+    /* Read the updated row using STATIC SQL and CURSOR */
+    EXEC SQL DECLARE posCur1 CURSOR FOR
+        SELECT id, name, dept, salary
+        FROM staff WHERE id = 310;
+    if (SQLCODE  <0)
+    {
+        printf("Declare Error:  SQLCODE = %d. \n", SQLCODE);
+    }
+    EXEC SQL OPEN posCur1;
+    EXEC SQL FETCH posCur1 INTO :id, :name, :dept, :salary ;
+    if (SQLCODE  <0)
+    {
+        printf("Fetch Error:  SQLCODE = %d. \n", SQLCODE);
+    }
+    else
+    {
+        printf(" Executing an dynamic SQL statement, updating the
+                \n salary value for the id equal to 310\n");
+        printf("\n ID   Name        DEPT       Salary\n");
+        printf(" %d           %s          %d       %f\n",
+            id, name, dept, salary);         }
+    EXEC SQL CLOSE posCur1;
+    /* Commit the transaction */
+    printf("\n  Commit the transaction.\n");
+    EXEC SQL COMMIT;
+    if (SQLCODE  <0)
+    {
+        printf("Error:  SQLCODE = %d. \n", SQLCODE);
+    }
+    /* Disconnect from the database */
+    connect_reset :
+        EXEC SQL CONNECT RESET;
+        if (SQLCODE  <0)
+        {
+        printf("Connection Error:  SQLCODE = %d. \n", SQLCODE);
+        }
+    return 0;
+    } /* end main */

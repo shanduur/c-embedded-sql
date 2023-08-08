@@ -1,0 +1,70 @@
+// example from:
+//  - https://www.cybertec-postgresql.com/en/embedded-sql-in-c-for-postgresql-with-ecpg-blog/
+
+#include <stdlib.h>
+#include <stdio.h>
+
+/* error handlers for the whole program */
+EXEC SQL WHENEVER SQLERROR CALL die();
+EXEC SQL WHENEVER NOT FOUND DO BREAK;
+
+static void die(void)
+{
+    /* avoid recursion on error */
+    EXEC SQL WHENEVER SQLERROR CONTINUE;
+
+    fprintf(
+        stderr,
+        "database error %s:\n%s\n",
+        sqlca.sqlstate,
+        sqlca.sqlerrm.sqlerrmc
+    );
+
+    EXEC SQL ROLLBACK;
+    EXEC SQL DISCONNECT;
+
+    exit(1);
+
+    /* restore the original handler */
+    EXEC SQL WHENEVER SQLERROR CALL die();
+}
+
+int main(int argc, char **argv)
+{
+    EXEC SQL BEGIN DECLARE SECTION;
+    int v_key, v_val_ind;
+    char v_val[81];
+    EXEC SQL END DECLARE SECTION;
+
+    EXEC SQL DECLARE c CURSOR FOR
+        SELECT key, value
+        FROM atable
+        ORDER BY key;
+
+    /* connect to the database */
+    EXEC SQL CONNECT TO
+        tcp:postgresql://localhost:5432/test?application_name=embedded
+        USER laurenz;
+
+    /* open a cursor */
+    EXEC SQL OPEN c;
+
+    /* loop will be left if the cursor is done */
+    for(;;)
+    {
+        /* get the next result row */
+        EXEC SQL FETCH NEXT FROM c INTO :v_key, :v_val :v_val_ind;
+
+        printf(
+            "key = %d, value = %s\n",
+            v_key,
+            v_val_ind ? "(null)" : v_val
+        );
+    }
+
+    EXEC SQL CLOSE c;
+    EXEC SQL COMMIT;
+    EXEC SQL DISCONNECT;
+
+    return 0;
+}

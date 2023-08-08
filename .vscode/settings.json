@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.pc": "c",
+        "*.ec": "c",
+        "*.sqc": "c",
+    }
+}
